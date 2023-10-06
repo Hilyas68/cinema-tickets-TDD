@@ -72,4 +72,19 @@ public class TicketServiceTest {
     assertEquals(exception.getMessage(), "Adult ticket is required",
         "should return Adult ticket is required");
   }
+
+  @Test
+  @DisplayName("Given a valid accountID and an list of tickets, then throw exception if more than the max(20)")
+  public void checkTicketDoesExceed20() {
+
+    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 12);
+    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 6);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.CHILD, 3);
+
+    InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class,
+        () -> ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket));
+
+    assertEquals(exception.getMessage(), "Maximum ticket exceeded",
+        "should return Maximum ticket exceeded");
+  }
 }

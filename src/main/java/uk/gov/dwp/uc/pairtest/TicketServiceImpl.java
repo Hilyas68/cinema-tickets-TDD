@@ -35,11 +35,26 @@ public class TicketServiceImpl implements TicketService {
     }
 
     if (ticketTypeRequests.length > 0) {
-      Optional<TicketTypeRequest> adultTicket = Arrays.stream(ticketTypeRequests)
-          .filter(ticket -> Type.ADULT.equals(ticket.getTicketType())).findFirst();
 
-      if (adultTicket.isEmpty()) {
+      int numberOfAdults = 0;
+      int numChildren = 0;
+      int numberOfInfants = 0;
+
+      for (TicketTypeRequest request : ticketTypeRequests) {
+        switch (request.getTicketType()) {
+          case ADULT -> numberOfAdults += request.getNoOfTickets();
+          case CHILD -> numChildren += request.getNoOfTickets();
+          case INFANT -> numberOfInfants += request.getNoOfTickets();
+        }
+      }
+
+      if (numberOfAdults == 0) {
         throw new InvalidPurchaseException("Adult ticket is required");
+      }
+
+      int totalTickets = numberOfAdults + numChildren + numberOfInfants;
+      if (totalTickets > 20) {
+        throw new InvalidPurchaseException("Maximum ticket exceeded");
       }
 
       paymentService.makePayment(accountId, -1);
