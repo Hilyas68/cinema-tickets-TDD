@@ -2,10 +2,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,5 +87,18 @@ public class TicketServiceTest {
 
     assertEquals(exception.getMessage(), "Maximum ticket exceeded",
         "should return Maximum ticket exceeded");
+  }
+
+  @Test
+  @DisplayName("Given a valid accountId and a list of valid tickets, then compute total amount to pay")
+  public void givenTicketsCalculateAmount() {
+
+    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 2);
+    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 2);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 3);
+
+    ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
+
+    verify(paymentService, times(1)).makePayment(eq(1L), eq(60));
   }
 }

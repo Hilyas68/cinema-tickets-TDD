@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
+import uk.gov.dwp.uc.pairtest.domain.TicketDetailDto;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
@@ -39,17 +40,21 @@ public class TicketServiceImpl implements TicketService {
 
     if (ticketTypeRequests.length > 0) {
 
-      int totalTickets = getTotalTickets(ticketTypeRequests);
-      if (totalTickets > MAX_TICKET) {
+      TicketDetailDto ticketDetails = getTotalTickets(ticketTypeRequests);
+      if (ticketDetails.getTotalTickets() > MAX_TICKET) {
         throw new InvalidPurchaseException(MAXIMUM_TICKET_EXCEEDED_MESSAGE);
       }
 
-      paymentService.makePayment(accountId, -1);
+      int adultCost = ticketDetails.getNumberOfAdults();
+      int childCost = ticketDetails.getNumChildren();
+      int totalTicketsPrice = adultCost * 20 + childCost * 10;
+
+      paymentService.makePayment(accountId, totalTicketsPrice);
       reservationService.reserveSeat(accountId, -1);
     }
   }
 
-  private static int getTotalTickets(TicketTypeRequest[] ticketTypeRequests) {
+  private static TicketDetailDto getTotalTickets(TicketTypeRequest[] ticketTypeRequests) {
     int numberOfAdults = 0;
     int numChildren = 0;
     int numberOfInfants = 0;
@@ -66,7 +71,8 @@ public class TicketServiceImpl implements TicketService {
       throw new InvalidPurchaseException(ADULT_TICKET_IS_REQUIRED_MESSAGE);
     }
 
-    return numberOfAdults + numChildren + numberOfInfants;
+    return new TicketDetailDto(numberOfAdults, numChildren, numberOfInfants,
+        numberOfAdults + numChildren + numberOfInfants);
   }
 
 }
