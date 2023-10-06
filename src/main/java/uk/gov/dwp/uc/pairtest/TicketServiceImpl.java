@@ -45,13 +45,15 @@ public class TicketServiceImpl implements TicketService {
         throw new InvalidPurchaseException(MAXIMUM_TICKET_EXCEEDED_MESSAGE);
       }
 
-      int adultCost = ticketDetails.getNumberOfAdults();
-      int childCost = ticketDetails.getNumChildren();
-      int totalTicketsPrice = adultCost * 20 + childCost * 10;
+      int totalTicketsPrice = getTotalTicketsPrice(ticketDetails);
 
       paymentService.makePayment(accountId, totalTicketsPrice);
       reservationService.reserveSeat(accountId, -1);
     }
+  }
+
+  private static int getTotalTicketsPrice(TicketDetailDto ticketDetails) {
+    return ticketDetails.getNumberOfAdults() * 20 + ticketDetails.getNumChildren() * 10;
   }
 
   private static TicketDetailDto getTotalTickets(TicketTypeRequest[] ticketTypeRequests) {
