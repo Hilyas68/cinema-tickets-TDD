@@ -52,11 +52,11 @@ public class TicketServiceImpl implements TicketService {
     }
   }
 
-  private static int getTotalTicketsPrice(TicketDetailDto ticketDetails) {
+  private static int getTotalTicketsPrice(final TicketDetailDto ticketDetails) {
     return ticketDetails.getNumberOfAdults() * 20 + ticketDetails.getNumChildren() * 10;
   }
 
-  private static TicketDetailDto getTotalTickets(TicketTypeRequest[] ticketTypeRequests) {
+  private static TicketDetailDto getTotalTickets(final TicketTypeRequest[] ticketTypeRequests) {
     int numberOfAdults = 0;
     int numChildren = 0;
     int numberOfInfants = 0;
