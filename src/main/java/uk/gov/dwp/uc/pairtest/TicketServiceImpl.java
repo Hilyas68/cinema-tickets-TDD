@@ -12,6 +12,9 @@ public class TicketServiceImpl implements TicketService {
 
   public static final int MIN_ACCOUNT_ID = 1;
   public static final String INVALID_ACCOUNT_ID_MESSAGE = "Invalid Account ID";
+  public static final int MAX_TICKET = 20;
+  public static final String MAXIMUM_TICKET_EXCEEDED_MESSAGE = "Maximum ticket exceeded";
+  public static final String ADULT_TICKET_IS_REQUIRED_MESSAGE = "Adult ticket is required";
 
   private final TicketPaymentService paymentService;
   private final SeatReservationService reservationService;
@@ -36,30 +39,34 @@ public class TicketServiceImpl implements TicketService {
 
     if (ticketTypeRequests.length > 0) {
 
-      int numberOfAdults = 0;
-      int numChildren = 0;
-      int numberOfInfants = 0;
-
-      for (TicketTypeRequest request : ticketTypeRequests) {
-        switch (request.getTicketType()) {
-          case ADULT -> numberOfAdults += request.getNoOfTickets();
-          case CHILD -> numChildren += request.getNoOfTickets();
-          case INFANT -> numberOfInfants += request.getNoOfTickets();
-        }
-      }
-
-      if (numberOfAdults == 0) {
-        throw new InvalidPurchaseException("Adult ticket is required");
-      }
-
-      int totalTickets = numberOfAdults + numChildren + numberOfInfants;
-      if (totalTickets > 20) {
-        throw new InvalidPurchaseException("Maximum ticket exceeded");
+      int totalTickets = getTotalTickets(ticketTypeRequests);
+      if (totalTickets > MAX_TICKET) {
+        throw new InvalidPurchaseException(MAXIMUM_TICKET_EXCEEDED_MESSAGE);
       }
 
       paymentService.makePayment(accountId, -1);
       reservationService.reserveSeat(accountId, -1);
     }
+  }
+
+  private static int getTotalTickets(TicketTypeRequest[] ticketTypeRequests) {
+    int numberOfAdults = 0;
+    int numChildren = 0;
+    int numberOfInfants = 0;
+
+    for (TicketTypeRequest request : ticketTypeRequests) {
+      switch (request.getTicketType()) {
+        case ADULT -> numberOfAdults += request.getNoOfTickets();
+        case CHILD -> numChildren += request.getNoOfTickets();
+        case INFANT -> numberOfInfants += request.getNoOfTickets();
+      }
+    }
+
+    if (numberOfAdults == 0) {
+      throw new InvalidPurchaseException(ADULT_TICKET_IS_REQUIRED_MESSAGE);
+    }
+
+    return numberOfAdults + numChildren + numberOfInfants;
   }
 
 }
