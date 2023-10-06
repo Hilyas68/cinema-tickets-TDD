@@ -1,3 +1,4 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,10 @@ public class TicketServiceTest {
   @DisplayName("Given an invalid account ID then throw an exception")
   public void givenInvalidAccountIdThrowException() {
 
-    assertThrows(InvalidPurchaseException.class, () -> ticketService.purchaseTickets(0L));
+    InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class,
+        () -> ticketService.purchaseTickets(0L));
+
+    assertEquals(exception.getMessage(), "Invalid Account ID", "should return invalid account ID");
   }
 
 }

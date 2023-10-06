@@ -14,7 +14,7 @@ public class TicketServiceImpl implements TicketService {
       throws InvalidPurchaseException {
 
     if (accountId <= 0) {
-      throw new InvalidPurchaseException();
+      throw new InvalidPurchaseException("Invalid Account ID");
     }
   }
 
