@@ -14,6 +14,8 @@ public class TicketServiceImpl implements TicketService {
   public static final int MAX_TICKET = 20;
   public static final String MAXIMUM_TICKET_EXCEEDED_MESSAGE = "Maximum ticket exceeded";
   public static final String ADULT_TICKET_IS_REQUIRED_MESSAGE = "Adult ticket is required";
+  public static final int COST_PER_ADULT = 20;
+  public static final int COST_PER_CHILD = 10;
 
   private final TicketPaymentService paymentService;
   private final SeatReservationService reservationService;
@@ -56,7 +58,8 @@ public class TicketServiceImpl implements TicketService {
   }
 
   private static int getTotalTicketsPrice(final TicketDetailDto ticketDetails) {
-    return ticketDetails.getNumberOfAdults() * 20 + ticketDetails.getNumChildren() * 10;
+    return ticketDetails.getNumberOfAdults() * COST_PER_ADULT
+        + ticketDetails.getNumChildren() * COST_PER_CHILD;
   }
 
   private static TicketDetailDto getTotalTickets(final TicketTypeRequest[] ticketTypeRequests) {
