@@ -5,6 +5,8 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 public class TicketServiceImpl implements TicketService {
 
+  public static final int MIN_ACCOUNT_ID = 1;
+
   /**
    * Should only have private methods other than the one below.
    */
@@ -13,7 +15,7 @@ public class TicketServiceImpl implements TicketService {
   public void purchaseTickets(Long accountId, TicketTypeRequest... ticketTypeRequests)
       throws InvalidPurchaseException {
 
-    if (accountId <= 0) {
+    if (accountId < MIN_ACCOUNT_ID) {
       throw new InvalidPurchaseException("Invalid Account ID");
     }
   }
