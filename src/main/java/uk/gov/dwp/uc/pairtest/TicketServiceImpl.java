@@ -1,8 +1,11 @@
 package uk.gov.dwp.uc.pairtest;
 
+import java.util.Arrays;
+import java.util.Optional;
 import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 public class TicketServiceImpl implements TicketService {
@@ -32,6 +35,13 @@ public class TicketServiceImpl implements TicketService {
     }
 
     if (ticketTypeRequests.length > 0) {
+      Optional<TicketTypeRequest> adultTicket = Arrays.stream(ticketTypeRequests)
+          .filter(ticket -> Type.ADULT.equals(ticket.getTicketType())).findFirst();
+
+      if (adultTicket.isEmpty()) {
+        throw new InvalidPurchaseException("Adult ticket is required");
+      }
+
       paymentService.makePayment(accountId, -1);
       reservationService.reserveSeat(accountId, -1);
     }

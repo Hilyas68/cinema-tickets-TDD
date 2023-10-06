@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import thirdparty.paymentgateway.TicketPaymentService;
 import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.TicketService;
 import uk.gov.dwp.uc.pairtest.TicketServiceImpl;
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest.Type;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,5 +57,19 @@ public class TicketServiceTest {
 
     verify(paymentService, never()).makePayment(anyLong(), anyInt());
     verify(reservationService, never()).reserveSeat(anyLong(), anyInt());
+  }
+
+  @Test
+  @DisplayName("Given a valid accountID and an list of tickets with no adult, then throw exception is no adult ticket present")
+  public void givenListOfTicketWithNoAdult() {
+
+    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 4);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.CHILD, 1);
+
+    InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class,
+        () -> ticketService.purchaseTickets(1L, childTicket, infantTicket));
+
+    assertEquals(exception.getMessage(), "Adult ticket is required",
+        "should return Adult ticket is required");
   }
 }
