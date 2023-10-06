@@ -80,7 +80,7 @@ public class TicketServiceTest {
 
     TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 12);
     TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 6);
-    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.CHILD, 3);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 3);
 
     InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class,
         () -> ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket));
