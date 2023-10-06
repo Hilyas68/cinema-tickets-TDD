@@ -78,6 +78,10 @@ public class TicketServiceImpl implements TicketService {
       throw new InvalidPurchaseException(ADULT_TICKET_IS_REQUIRED_MESSAGE);
     }
 
+    if (numberOfInfants > numberOfAdults) {
+      throw new InvalidPurchaseException("Infants can't be more that adults");
+    }
+
     return new TicketDetailDto(numberOfAdults, numChildren, numberOfInfants,
         numberOfAdults + numChildren + numberOfInfants);
   }

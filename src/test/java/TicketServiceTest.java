@@ -95,7 +95,7 @@ public class TicketServiceTest {
 
     TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 2);
     TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 2);
-    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 3);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 2);
 
     ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
 
@@ -113,5 +113,21 @@ public class TicketServiceTest {
     ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
 
     verify(reservationService, times(1)).reserveSeat(eq(1L), eq(6));
+  }
+
+  @Test
+  @DisplayName(
+      "Given a valid accountId and a list of valid tickets, then throw exception if number "
+          + "of infants is more than adults")
+  public void validateInfantAgainstAdult() {
+
+    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 4);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 5);
+
+    InvalidPurchaseException exception = assertThrows(InvalidPurchaseException.class,
+        () -> ticketService.purchaseTickets(1L, adultTicket, infantTicket));
+
+    assertEquals(exception.getMessage(), "Infants can't be more that adults",
+        "should return 'Infants can't be more that adults'");
   }
 }
