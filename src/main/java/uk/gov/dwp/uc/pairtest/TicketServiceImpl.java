@@ -46,9 +46,10 @@ public class TicketServiceImpl implements TicketService {
       }
 
       int totalTicketsPrice = getTotalTicketsPrice(ticketDetails);
+      int totalSeatToReserve = ticketDetails.getNumberOfAdults() + ticketDetails.getNumChildren();
 
       paymentService.makePayment(accountId, totalTicketsPrice);
-      reservationService.reserveSeat(accountId, -1);
+      reservationService.reserveSeat(accountId, totalSeatToReserve);
     }
   }
 

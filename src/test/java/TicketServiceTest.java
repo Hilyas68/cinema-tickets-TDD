@@ -101,4 +101,17 @@ public class TicketServiceTest {
 
     verify(paymentService, times(1)).makePayment(eq(1L), eq(60));
   }
+
+  @Test
+  @DisplayName("Given a valid accountId and a list of valid tickets, then compute total seat to reserve")
+  public void computeSeatToReserve() {
+
+    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 4);
+    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 2);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 3);
+
+    ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
+
+    verify(reservationService, times(1)).reserveSeat(eq(1L), eq(6));
+  }
 }
