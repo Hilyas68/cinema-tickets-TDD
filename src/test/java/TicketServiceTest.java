@@ -104,7 +104,8 @@ public class TicketServiceTest {
     verify(paymentService, times(1)).makePayment(eq(1L), eq(expected));
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource({"4,2,3,6", "1,0,0, 1"})
   @DisplayName("Given a valid accountId and a list of valid tickets, then compute total seat to reserve")
   public void computeSeatToReserve() {
 
