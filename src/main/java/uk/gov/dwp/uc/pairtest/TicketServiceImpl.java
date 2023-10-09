@@ -80,7 +80,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     if (numberOfInfants > numberOfAdults) {
-      throw new InvalidPurchaseException("Infants can't be more that adults");
+      throw new InvalidPurchaseException("Infants can't be more than adults");
     }
 
     return new TicketDetailDto(numberOfAdults, numChildren, numberOfInfants,
