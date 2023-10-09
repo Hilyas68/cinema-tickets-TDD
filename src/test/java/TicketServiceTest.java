@@ -89,17 +89,19 @@ public class TicketServiceTest {
         "should return Maximum ticket exceeded");
   }
 
-  @Test
+  @ParameterizedTest
+  @CsvSource({"2,2,2,60", "1,0,0, 20"})
   @DisplayName("Given a valid accountId and a list of valid tickets, then compute total amount to pay")
-  public void givenTicketsCalculateAmount() {
+  public void givenTicketsCalculateAmount(int adultInput, int childInput, int infantInput,
+      int expected) {
 
-    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, 2);
-    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, 2);
-    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, 2);
+    TicketTypeRequest adultTicket = new TicketTypeRequest(Type.ADULT, adultInput);
+    TicketTypeRequest childTicket = new TicketTypeRequest(Type.CHILD, childInput);
+    TicketTypeRequest infantTicket = new TicketTypeRequest(Type.INFANT, infantInput);
 
     ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
 
-    verify(paymentService, times(1)).makePayment(eq(1L), eq(60));
+    verify(paymentService, times(1)).makePayment(eq(1L), eq(expected));
   }
 
   @Test
